@@ -32,7 +32,7 @@
   [css]
   (reduce
    (fn [s [k v]]
-     (str s (name k) " {" (style v) "}\n"))
+     (str s (style-val k) " {" (style v) "}\n"))
    "\n"
    css))
 
