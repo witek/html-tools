@@ -12,7 +12,9 @@
 (defn serve-request [page-config req]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (html/page-html page-config)})
+   :body (html/page-html (if (fn? page-config)
+                           (page-config req)
+                           page-config))})
 
 
 (defn run-http-server
@@ -26,4 +28,4 @@
 
 
 (defn -main []
-  (run-http-server (merge (:bootstrap-cdn html/templates) {:content "hello world"})))
+  (run-http-server {:modules [:bootstrap-cdn] :content "hello world"}))
