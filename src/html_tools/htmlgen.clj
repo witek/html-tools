@@ -44,8 +44,7 @@
    (if-let [css-map (:css config)]
      [:style (css/css css-map)])
 
-   (if-let [title (:title config)]
-     [:title (util/escape-html title)])])
+   [:title (util/escape-html (:title config))]])
 
 
 (defn page-body
