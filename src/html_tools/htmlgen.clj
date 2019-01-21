@@ -51,13 +51,19 @@
 
    [:title (util/escape-html (:title config))]])
 
+(defn- js-include->tag-attrs [js-include]
+  (if (string? js-include)
+    {:src js-include}
+    js-include))
 
 (defn page-body
   [config]
   (-> [:body]
       (into (:content config))
 
-      (into (map hiccup/include-js (:js-includes config)))
+      (into
+       (for [js-include (:js-includes config)]
+         [:script (js-include->tag-attrs js-include)]))
 
       (into
         (for [js-inline (:js-inlines config)]
