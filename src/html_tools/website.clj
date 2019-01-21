@@ -11,6 +11,11 @@
     (println "    *" file-name)
     (html-tools/write-page! page-config file)))
 
+(defn same-file? [a b]
+  (and
+   (= (.getName a) (.getName b))
+   (= (.length a) (.length b))))
+
 (defn copy-file [target dir file-name]
   (let [from-file (-> (str "resources/" dir file-name) io/as-file)
         to-file (-> (str target "/" dir file-name) io/as-file)]
@@ -21,13 +26,14 @@
         (doall
          (for [file (.listFiles from-file)]
            (copy-file target (str dir (.getName from-file) "/") (.getName file)))))
-      (do
-        (println "    *" (str dir file-name))
-        (java.nio.file.Files/copy
-         (.toPath from-file)
-         (.toPath to-file)
-         (into-array java.nio.file.CopyOption
-                     [java.nio.file.StandardCopyOption/REPLACE_EXISTING]))))))
+      (when (not (same-file? from-file to-file))
+        (do
+          (println "    *" (str dir file-name))
+          (java.nio.file.Files/copy
+           (.toPath from-file)
+           (.toPath to-file)
+           (into-array java.nio.file.CopyOption
+                       [java.nio.file.StandardCopyOption/REPLACE_EXISTING])))))))
 
 
 
