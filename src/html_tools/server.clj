@@ -25,10 +25,11 @@
         uri (if (= "/" uri) "/index.html" uri)
         uri (.substring uri 1) ; cause uri always starts with '/'
         page-config (get-in website-config [:pages uri])]
-    (when page-config
+    (if page-config
       {:status 200
        :headers {"Content-Type" "text/html"}
-       :body (html/page-html (page-config req))})))
+       :body (html/page-html (page-config req))}
+      {:status 404})))
 
 
 (defn run-http-server
@@ -38,11 +39,6 @@
       (ring-file/wrap-file "resources")
       (ring-reload/wrap-reload)
       (jetty/run-jetty {:port port})))
-  ;; (jetty/run-jetty
-  ;;  (reload/wrap-reload
-  ;;   (fn [req]
-  ;;     (serve-request website-config req)))
-  ;;  {:port port}))
 
 
 (defn demo-index-page [req]
