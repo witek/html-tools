@@ -20,7 +20,7 @@
 
 (defn write-page!
   [page-config file]
-  (println "Writing" file)
+  ;; (println "Writing" file)
   (spit file (page-html (page-config nil))))
 
 

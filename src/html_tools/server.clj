@@ -9,23 +9,33 @@
 (def port 9500)
 
 
-(defn serve-request [page-config req]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body (html/page-html (if (fn? page-config)
-                           (page-config req)
-                           page-config))})
+(defn serve-request [website-config req]
+  (let [uri (:uri req)
+        uri (if (= "/" uri) "/index.html" uri)
+        uri (.substring uri 1) ; cause uri always starts with '/'
+        page-config (get-in website-config [:pages uri])]
+    (if page-config
+      {:status 200
+       :headers {"Content-Type" "text/html"}
+       :body (html/page-html (page-config req))}
+      {:status 404})))
 
 
 (defn run-http-server
-  [page-config]
+  [website-config]
   (println "\nStarting JETTY:      --> " (str "http://localhost:" port "/") "\n")
   (jetty/run-jetty
    (reload/wrap-reload
     (fn [req]
-      (serve-request page-config req)))
+      (serve-request website-config req)))
    {:port port}))
 
 
+(defn demo-index-page [req]
+  {:modules [:bootstrap-cdn] :content "hello world"})
+
+(def demo-website-config
+  {:pages {"index.html" demo-index-page}})
+
 (defn -main []
-  (run-http-server {:modules [:bootstrap-cdn] :content "hello world"}))
+  (run-http-server demo-website-config))
