@@ -38,7 +38,11 @@
      (hiccup/include-css uri))
 
    (for [font (:google-fonts config)]
-     (hiccup/include-css (str "https://fonts.googleapis.com/css?family=" font)))
+     [:link
+      {:href (str "https://fonts.googleapis.com/css?family=" font)
+       :rel "stylesheet"
+       :type "text/css"}])
+     ;;(hiccup/include-css (str "https://fonts.googleapis.com/css?family=" font)))
 
    (for [css-inline (:css-inlines config)]
      [:style (slurp css-inline)])
