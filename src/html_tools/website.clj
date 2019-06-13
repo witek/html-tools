@@ -44,8 +44,10 @@
   (println "  generating pages")
   (doall
    (for [[file-name page-config] (get website-config :pages)]
-     (generate-page-file target file-name page-config)))
+     (generate-page-file target file-name page-config))))
 
+
+(defn copy-resources [target]
   (println "  copying resources")
   (doall
    (for [file (-> "resources" io/as-file .listFiles)]
@@ -58,4 +60,7 @@
     "!http"
     (server/run-http-server website-config)
 
-    (generate-files target website-config)))
+    (do
+      (generate-files target website-config)
+      (when (:copy-resources? website-config)
+        (copy-resources target)))))
