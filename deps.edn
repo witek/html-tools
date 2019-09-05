@@ -1,3 +1,3 @@
-{:deps {hiccup {:mvn/version "1.0.5"}
-        ring {:mvn/version "1.7.1"}}
+{:deps {hiccup {:mvn/version "1.0.5"}}
+        ;;ring {:mvn/version "1.7.1"}}
  :paths ["src" "target"]}

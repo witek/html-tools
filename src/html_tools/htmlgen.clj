@@ -2,7 +2,8 @@
   (:require
    [hiccup.page :as hiccup]
    [hiccup.util :as util]
-   [html-tools.css :as css]))
+   [html-tools.css :as css]
+   [html-tools.snippets.preloader :as preloader]))
 
 
 (def modules
@@ -11,7 +12,14 @@
                                  "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
                                  "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
    :page-reload {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
-                 :js-scripts ["page_reload.api.watch();"]}})
+                 :js-scripts ["page_reload.api.watch();"]}
+   :browserapp (fn [config]
+                 {:css-codes [preloader/css-code]
+                  :js-includes [(if (:dev-mode config)
+                                  "/cljs-out/dev-main.js"
+                                  "/cljs-out/prod-main.js")]
+                  :body-contents-before [[:div {:id "app"}
+                                          preloader/html-code]]})})
 
 
 (def default-config
@@ -30,10 +38,13 @@
 (defn page-head
   [config]
   [:head
+   "\n"
    [:meta {:charset (:charset config)}]
+   "\n"
    [:meta {:name "viewport"
            :content (:viewport config)}]
 
+   "\n"
    (for [uri (:css-includes config)]
      (hiccup/include-css uri))
 
@@ -47,13 +58,19 @@
    (for [css-inline (:css-inlines config)]
      [:style (slurp css-inline)])
 
+   (for [css-code (:css-codes config)]
+     [:style css-code])
+
    (for [css-map (:css-maps config)]
      [:style (css/css css-map)])
 
    (if-let [css-map (:css config)]
      [:style (css/css css-map)])
 
-   [:title (util/escape-html (:title config))]])
+   "\n"
+   [:title (util/escape-html (:title config))]
+
+   "\n"])
 
 (defn- js-include->tag-attrs [js-include]
   (if (string? js-include)
@@ -63,19 +80,38 @@
 (defn page-body
   [config]
   (-> [:body]
+
+      (conj "\n")
+
+      (into
+       (for [content (:body-contents-before config)]
+         content))
+
+      (conj "\n")
+
       (into (:content config))
+
+      (conj "\n")
 
       (into
        (for [js-include (:js-includes config)]
          [:script (js-include->tag-attrs js-include)]))
 
+      (conj "\n")
+
       (into
         (for [js-inline (:js-inlines config)]
           [:script (slurp js-inline)]))
 
+      (conj "\n")
+
       (into (for [script (:js-scripts config)] [:script script]))
 
-      (conj [:script (:script config)])))
+      (conj "\n")
+
+      (conj [:script (:script config)])
+
+      (conj "\n")))
 
 
 (defn- deep-merge [v & vs]
@@ -102,13 +138,16 @@
 
 
 (defn- module->content
-  [module-key]
-  (get modules module-key))
+  [config module-key]
+  (let [content (get modules module-key)]
+    (if (fn? content)
+      (content config)
+      content)))
 
 
 (defn- process-config
   [config]
-  (let [configs (into [] (map module->content (:modules config)))
+  (let [configs (into [] (map (partial module->content config) (:modules config)))
         configs (conj configs config)]
     (reduce
      (fn [ret config]
