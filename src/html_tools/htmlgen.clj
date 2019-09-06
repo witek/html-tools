@@ -13,11 +13,10 @@
                                  "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
    :page-reload {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
                  :js-scripts ["page_reload.api.watch();"]}
-   :browserapp (fn [config]
+   :browserapp (fn [{:as config
+                     :keys [js-build-name]}]
                  {:css-codes [preloader/css-code]
-                  :js-includes [(if (:dev-mode config)
-                                  "/cljs-out/dev-main.js"
-                                  "/cljs-out/prod-main.js")]
+                  :js-includes [(str "/cljs-out/" (or js-build-name "prod") "-main.js")]
                   :body-contents-before [[:div {:id "app"}
                                           preloader/html-code]]})})
 
