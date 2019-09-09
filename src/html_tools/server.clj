@@ -28,7 +28,7 @@
     (if page-config
       {:status 200
        :headers {"Content-Type" "text/html"}
-       :body (html/page-html (page-config req))}
+       :body (html/page-html req (page-config req))}
       {:status 404})))
 
 

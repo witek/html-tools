@@ -21,7 +21,7 @@
 (defn write-page!
   [page-config file]
   ;; (println "Writing" file)
-  (spit file (page-html (page-config nil))))
+  (spit file (page-html nil (page-config nil))))
 
 
 (defn error [ex]

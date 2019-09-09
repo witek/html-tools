@@ -1,3 +1,4 @@
 {:own []
- :foreign {hiccup {:mvn/version "1.0.5"}
-           ring {:mvn/version "1.7.1"}}}
+ :foreign {hiccup   {:mvn/version "1.0.5"}
+           ring     {:mvn/version "1.7.1"}
+           cheshire {:mvn/version "5.9.0"}}}

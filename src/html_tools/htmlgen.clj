@@ -3,7 +3,8 @@
    [hiccup.page :as hiccup]
    [hiccup.util :as util]
    [html-tools.css :as css]
-   [html-tools.snippets.preloader :as preloader]))
+   [html-tools.snippets.preloader :as preloader]
+   [html-tools.snippets.browserapp :as browserapp]))
 
 
 (def modules
@@ -13,12 +14,17 @@
                                  "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
    :page-reload {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
                  :js-scripts ["page_reload.api.watch();"]}
-   :browserapp (fn [{:as config
-                     :keys [js-build-name]}]
+   :browserapp (fn [request
+                    {:as config
+                     :keys [js-build-name
+                            browserapp-name
+                            browserapp-config-f]}]
                  {:css-codes [preloader/css-code]
-                  :js-includes [(str "/cljs-out/" (or js-build-name "prod") "-main.js")]
-                  :body-contents-before [[:div {:id "app"}
-                                          preloader/html-code]]})})
+                  :js-includes [(browserapp/js-include js-build-name)]
+                  :js-scripts [(browserapp/main-script
+                                browserapp-name
+                                (browserapp-config-f request))]
+                  :body-contents-before [(browserapp/body)]})})
 
 
 (def default-config
@@ -137,16 +143,16 @@
 
 
 (defn- module->content
-  [config module-key]
+  [request config module-key]
   (let [content (get modules module-key)]
     (if (fn? content)
-      (content config)
+      (content request config)
       content)))
 
 
 (defn- process-config
-  [config]
-  (let [configs (into [] (map (partial module->content config) (:modules config)))
+  [request config]
+  (let [configs (into [] (map (partial module->content request config) (:modules config)))
         configs (conj configs config)]
     (reduce
      (fn [ret config]
@@ -156,6 +162,6 @@
 
 
 (defn page-html
-  [config]
-  (let [config (process-config config)]
+  [request config]
+  (let [config (process-config request config)]
     (hiccup/html5 (page-head config) (page-body config))))
