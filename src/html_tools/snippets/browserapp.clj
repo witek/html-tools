@@ -8,6 +8,7 @@
 
 
 (defn main-script [app-name browserapp-config]
+  (when-not app-name (throw (ex-info "app-name required" {})))
   (let [app-name (.replace app-name "-" "_")
         config-json (ceshire/generate-string {:edn (pr-str browserapp-config)})]
     (str "
