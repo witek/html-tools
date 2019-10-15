@@ -14,6 +14,7 @@
                                  "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
    :page-reload {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
                  :js-scripts ["page_reload.api.watch();"]}
+   :manifest-json {:links [{:rel "manifest" :href "/manifest.json"}]}
    :browserapp (fn [request
                     {:as config
                      :keys [js-build-name
@@ -48,6 +49,10 @@
    "\n"
    [:meta {:name "viewport"
            :content (:viewport config)}]
+
+   "\n"
+   (for [link (:links config)]
+     [:link link])
 
    "\n"
    (for [uri (:css-includes config)]
