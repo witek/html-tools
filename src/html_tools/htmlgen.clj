@@ -4,28 +4,42 @@
    [hiccup.util :as util]
    [html-tools.css :as css]
    [html-tools.snippets.preloader :as preloader]
-   [html-tools.snippets.browserapp :as browserapp]))
+   [html-tools.snippets.browserapp :as browserapp]
+   [html-tools.snippets.google-analytics :as google-analytics]))
 
 
 (def modules
-  {:bootstrap-cdn {:css-includes ["https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"]
-                   :js-includes ["https://code.jquery.com/jquery-3.3.1.slim.min.js"
-                                 "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-                                 "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
-   :page-reload {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
-                 :js-scripts ["page_reload.api.watch();"]}
-   :manifest-json {:links [{:rel "manifest" :href "/manifest.json"}]}
-   :browserapp (fn [request
-                    {:as config
-                     :keys [js-build-name
-                            browserapp-name
-                            browserapp-config-f]}]
-                 {:css-codes [preloader/css-code]
-                  :js-includes [(browserapp/js-include js-build-name)]
-                  :js-scripts [(browserapp/main-script
-                                browserapp-name
-                                (browserapp-config-f request))]
-                  :body-contents-before [(browserapp/body)]})})
+  {:bootstrap-cdn
+   {:css-includes ["https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"]
+    :js-includes ["https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                  "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                  "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"]}
+
+   :page-reload
+   {:js-includes ["https://github.com/witek/page-reload/releases/download/v1.0.1/page-reload.js"]
+    :js-scripts ["page_reload.api.watch();"]}
+
+   :manifest-json
+   {:links [{:rel "manifest" :href "/manifest.json"}]}
+
+   :browserapp
+   (fn [request
+        {:as config
+         :keys [js-build-name
+                browserapp-name
+                browserapp-config-f]}]
+     {:css-codes [preloader/css-code]
+      :js-includes [(browserapp/js-include js-build-name)]
+      :js-scripts [(browserapp/main-script
+                    browserapp-name
+                    (browserapp-config-f request))]
+      :body-contents-before [(browserapp/body)]})
+
+   :google-analytics
+   (fn [request
+        {:as config
+         :keys [google-analytics-tracking-id]}]
+     {:head-contents (google-analytics/html-head-components google-analytics-tracking-id)})})
 
 
 (def default-config
@@ -53,6 +67,10 @@
    "\n"
    (for [link (:links config)]
      [:link link])
+
+   "\n"
+   (for [content (:head-contents config)]
+     content)
 
    "\n"
    (for [uri (:css-includes config)]
