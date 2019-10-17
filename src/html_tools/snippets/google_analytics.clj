@@ -11,6 +11,6 @@
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '" tracking-id "')};
+gtag('config', '" tracking-id "');
 ")]
      "\n"]))
