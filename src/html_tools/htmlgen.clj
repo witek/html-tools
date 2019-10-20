@@ -29,11 +29,16 @@
                 browserapp-name
                 browserapp-config-f]}]
      {:css-codes [preloader/css-code]
-      :js-includes [(browserapp/js-include js-build-name)]
-      :js-scripts [(browserapp/main-script
-                    browserapp-name
-                    (browserapp-config-f request))]
-      :body-contents-before [(browserapp/body)]})
+      :body-contents-before [(browserapp/body)]
+      :body-contents-after [[:script
+                             (browserapp/config-script
+                              (browserapp-config-f request))]
+                            "\n"
+                            [:script {:src (browserapp/js-include js-build-name)}]
+                            "\n"
+                            [:script
+                             (browserapp/main-script
+                              browserapp-name)]]})
 
    :google-analytics
    (fn [request
@@ -138,6 +143,12 @@
       (conj "\n")
 
       (conj [:script (:script config)])
+
+      (conj "\n")
+
+      (into
+       (for [content (:body-contents-after config)]
+         content))
 
       (conj "\n")))
 
