@@ -13,6 +13,9 @@
   {:error-alert
    {:js-scripts [error-alert/script]}
 
+   :tachyons-cdn
+   {:css-includes ["https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"]}
+
    :bootstrap-cdn
    {:css-includes ["https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"]
     :js-includes ["https://code.jquery.com/jquery-3.3.1.slim.min.js"

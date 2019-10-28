@@ -1,5 +1,6 @@
 (ns html-tools.api
   (:require
+   [clojure.java.io :as io]
    [hiccup.page :as hiccup]
    [hiccup.util :as util]
    [html-tools.css :as css]
@@ -21,7 +22,11 @@
 (defn write-page!
   [page-config file]
   ;; (println "Writing" file)
-  (spit file (page-html nil (page-config nil))))
+  (-> file io/as-file .getParentFile .mkdirs)
+  (spit file (page-html nil
+                        (if (fn? page-config)
+                          (page-config nil)
+                          page-config))))
 
 
 (defn error [ex]
