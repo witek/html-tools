@@ -4,7 +4,7 @@
    [cheshire.core :as ceshire]))
 
 (defn js-include [build-name]
-  (str "/cljs-out/" (or build-name "prod") "-main.js"))
+  (str "/cljs-out/" (or build-name "main") ".js"))
 
 
 (defn config-script [browserapp-config]

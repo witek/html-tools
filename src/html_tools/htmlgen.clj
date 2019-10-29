@@ -41,11 +41,11 @@
                              (browserapp/config-script
                               (browserapp-config-f request))]
                             "\n"
-                            [:script {:src (browserapp/js-include js-build-name)}]
-                            "\n"
-                            [:script
-                             (browserapp/main-script
-                              browserapp-name)]]})
+                            [:script {:src (browserapp/js-include js-build-name)}]]})
+                            ;; "\n"
+                            ;; [:script
+                            ;;  (browserapp/main-script
+                            ;;   browserapp-name)]]})
 
    :google-analytics
    (fn [request
