@@ -215,4 +215,7 @@
 (defn page-html
   [request config]
   (let [config (process-config request config)]
-    (hiccup/html5 (page-head config) (page-body config))))
+    (hiccup/html5
+     {:lang (or (-> config :lang) "en")}
+     (page-head config)
+     (page-body config))))
