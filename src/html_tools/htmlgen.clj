@@ -33,6 +33,7 @@
    (fn [request
         {:as config
          :keys [js-build-name
+                js-build-v
                 browserapp-name
                 browserapp-config-f]}]
      {:css-codes [preloader/css-code]
@@ -41,7 +42,7 @@
                              (browserapp/config-script
                               (browserapp-config-f request))]
                             "\n"
-                            [:script {:src (browserapp/js-include js-build-name)}]]})
+                            [:script {:src (browserapp/js-include js-build-name js-build-v)}]]})
                             ;; "\n"
                             ;; [:script
                             ;;  (browserapp/main-script

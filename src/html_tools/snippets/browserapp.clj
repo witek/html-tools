@@ -3,8 +3,10 @@
    [html-tools.snippets.preloader :as preloader]
    [cheshire.core :as ceshire]))
 
-(defn js-include [build-name]
-  (str "/" (or build-name "main") ".js"))
+(defn js-include [build-name v]
+  (str "/" (or build-name "main") ".js"
+       (when v
+         (str "?v=" v))))
 
 
 (defn config-script [browserapp-config]
